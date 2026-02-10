@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Asset Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .kpi-card { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            padding: 1.5rem; 
+            border-radius: 0.75rem; 
+            color: white; 
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Welcome Notification -->
+    <div id="welcome-notification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <div class="flex items-center">
+            <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+            <span>Welcome to Dashboard!</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i data-lucide="package" class="w-8 h-8 text-indigo-600 mr-3"></i>
+                    <h1 class="text-xl font-bold">Asset Management System</h1>
+                </div>
+                
+                <nav class="hidden md:flex space-x-8">
+                    <a href="dashboard.html" class="text-indigo-600 px-3 py-2 text-sm font-medium">Dashboard</a>
+                    <a href="assets.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Assets</a>
+                    <a href="maintenance.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Maintenance</a>
+                    <a href="reports.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Reports</a>
+                    <a href="users.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Users</a>
+                    <a href="settings.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Settings</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-gray-900" id="user-name">Admin User</p>
+                        <p class="text-xs text-gray-500" id="user-role">Administrator</p>
+                    </div>
+                    <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center">
+                        <span id="user-initials" class="text-white font-medium">A</span>
+                    </div>
+                    <button onclick="handleLogout()" class="text-red-600 hover:text-red-800 text-sm font-medium">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">Dashboard</h2>
+            <p class="text-gray-600 mt-2">Welcome back! Here's your asset management overview.</p>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="kpi-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm">Total Assets</p>
+                        <p class="text-3xl font-bold mt-1">247</p>
+                        <p class="text-white/70 text-sm mt-2">+12% from last month</p>
+                    </div>
+                    <i data-lucide="package" class="w-12 h-12 text-white/50"></i>
+                </div>
+            </div>
+            
+            <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm">Active Assets</p>
+                        <p class="text-3xl font-bold mt-1">189</p>
+                        <p class="text-white/70 text-sm mt-2">76.5% utilization</p>
+                    </div>
+                    <i data-lucide="activity" class="w-12 h-12 text-white/50"></i>
+                </div>
+            </div>
+            
+            <div class="kpi-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm">Maintenance</p>
+                        <p class="text-3xl font-bold mt-1">23</p>
+                        <p class="text-white/70 text-sm mt-2">Scheduled this month</p>
+                    </div>
+                    <i data-lucide="wrench" class="w-12 h-12 text-white/50"></i>
+                </div>
+            </div>
+            
+            <div class="kpi-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm">Health Score</p>
+                        <p class="text-3xl font-bold mt-1">94%</p>
+                        <p class="text-white/70 text-sm mt-2">Excellent condition</p>
+                    </div>
+                    <i data-lucide="trending-up" class="w-12 h-12 text-white/50"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-4">Asset Distribution</h3>
+                <canvas id="assetChart"></canvas>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-4">Maintenance Overview</h3>
+                <canvas id="maintenanceChart"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            
+            if (!isLoggedIn || !currentUser.email) {
+                alert('You are not logged in. Redirecting to login page...');
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            return true;
+        }
+
+        function loadUserData() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            
+            if (currentUser.name) {
+                document.getElementById('user-name').textContent = currentUser.name;
+                document.getElementById('user-role').textContent = currentUser.role;
+                document.getElementById('user-initials').textContent = currentUser.name.charAt(0).toUpperCase();
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuth()) {
+                loadUserData();
+                
+                setTimeout(() => {
+                    const welcomeNotification = document.getElementById('welcome-notification');
+                    if (welcomeNotification) {
+                        welcomeNotification.style.display = 'none';
+                    }
+                }, 3000);
+                
+                const assetCtx = document.getElementById('assetChart');
+                if (assetCtx) {
+                    new Chart(assetCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Electronics', 'Vehicles', 'Furniture', 'Software'],
+                            datasets: [{
+                                data: [30, 25, 20, 25],
+                                backgroundColor: ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+
+                const maintenanceCtx = document.getElementById('maintenanceChart');
+                if (maintenanceCtx) {
+                    new Chart(maintenanceCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Completed',
+                                data: [12, 19, 8, 15, 22, 18],
+                                backgroundColor: '#10b981'
+                            }, {
+                                label: 'Scheduled',
+                                data: [8, 12, 15, 10, 18, 14],
+                                backgroundColor: '#f59e0b'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
