@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets - Asset Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i data-lucide="package" class="w-8 h-8 text-indigo-600 mr-3"></i>
+                    <h1 class="text-xl font-bold">Asset Management System</h1>
+                </div>
+                
+                <nav class="hidden md:flex space-x-8">
+                    <a href="dashboard.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Dashboard</a>
+                    <a href="assets.html" class="text-indigo-600 px-3 py-2 text-sm font-medium">Assets</a>
+                    <a href="maintenance.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Maintenance</a>
+                    <a href="reports.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Reports</a>
+                    <a href="users.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Users</a>
+                    <a href="settings.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Settings</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-gray-900" id="user-name">Admin User</p>
+                        <p class="text-xs text-gray-500" id="user-role">Administrator</p>
+                    </div>
+                    <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center">
+                        <span id="user-initials" class="text-white font-medium">A</span>
+                    </div>
+                    <button onclick="handleLogout()" class="text-red-600 hover:text-red-800 text-sm font-medium">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">Assets</h2>
+                <p class="text-gray-600 mt-2">Manage your company assets</p>
+            </div>
+            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                Add Asset
+            </button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center">
+                        <i data-lucide="package" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-600">Total Assets</p>
+                        <p class="text-2xl font-bold">247</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-600">Active</p>
+                        <p class="text-2xl font-bold">189</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center">
+                        <i data-lucide="alert-circle" class="w-6 h-6 text-yellow-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-600">Maintenance</p>
+                        <p class="text-2xl font-bold">23</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center">
+                        <i data-lucide="x-circle" class="w-6 h-6 text-red-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-600">Retired</p>
+                        <p class="text-2xl font-bold">35</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assets Table -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold">Asset List</h3>
+                    <div class="flex space-x-2">
+                        <input type="text" placeholder="Search assets..." class="px-3 py-2 border rounded-lg">
+                        <select class="px-3 py-2 border rounded-lg">
+                            <option>All Categories</option>
+                            <option>Electronics</option>
+                            <option>Vehicles</option>
+                            <option>Furniture</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Asset ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">AST001</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">Laptop Dell XPS 15</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">Electronics</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">IT Department</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <button class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">AST002</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">Office Chair</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">Furniture</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Maintenance</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">Conference Room</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <button class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuth()) {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (currentUser.name) {
+                    document.getElementById('user-name').textContent = currentUser.name;
+                    document.getElementById('user-role').textContent = currentUser.role;
+                    document.getElementById('user-initials').textContent = currentUser.name.charAt(0).toUpperCase();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
