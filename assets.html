@@ -6,6 +6,9 @@
     <title>Assets - Asset Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .modal-backdrop { backdrop-filter: blur(5px); }
+    </style>
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
@@ -47,7 +50,7 @@
                 <h2 class="text-3xl font-bold text-gray-900">Assets</h2>
                 <p class="text-gray-600 mt-2">Manage your company assets</p>
             </div>
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+            <button onclick="openAddModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
                 <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
                 Add Asset
             </button>
@@ -62,7 +65,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm text-gray-600">Total Assets</p>
-                        <p class="text-2xl font-bold">247</p>
+                        <p class="text-2xl font-bold" id="total-assets">0</p>
                     </div>
                 </div>
             </div>
@@ -74,7 +77,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm text-gray-600">Active</p>
-                        <p class="text-2xl font-bold">189</p>
+                        <p class="text-2xl font-bold" id="active-assets">0</p>
                     </div>
                 </div>
             </div>
@@ -86,7 +89,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm text-gray-600">Maintenance</p>
-                        <p class="text-2xl font-bold">23</p>
+                        <p class="text-2xl font-bold" id="maintenance-assets">0</p>
                     </div>
                 </div>
             </div>
@@ -98,7 +101,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm text-gray-600">Retired</p>
-                        <p class="text-2xl font-bold">35</p>
+                        <p class="text-2xl font-bold" id="retired-assets">0</p>
                     </div>
                 </div>
             </div>
@@ -110,12 +113,13 @@
                 <div class="flex justify-between items-center">
                     <h3 class="text-lg font-semibold">Asset List</h3>
                     <div class="flex space-x-2">
-                        <input type="text" placeholder="Search assets..." class="px-3 py-2 border rounded-lg">
-                        <select class="px-3 py-2 border rounded-lg">
-                            <option>All Categories</option>
-                            <option>Electronics</option>
-                            <option>Vehicles</option>
-                            <option>Furniture</option>
+                        <input type="text" id="search-input" placeholder="Search assets..." class="px-3 py-2 border rounded-lg" onkeyup="searchAssets()">
+                        <select id="category-filter" class="px-3 py-2 border rounded-lg" onchange="filterAssets()">
+                            <option value="">All Categories</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Vehicles">Vehicles</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Software">Software</option>
                         </select>
                     </div>
                 </div>
@@ -133,39 +137,123 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">AST001</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">Laptop Dell XPS 15</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">Electronics</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">IT Department</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <button class="text-indigo-600 hover:text-indigo-900">Edit</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">AST002</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">Office Chair</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">Furniture</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Maintenance</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">Conference Room</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <button class="text-indigo-600 hover:text-indigo-900">Edit</button>
-                            </td>
-                        </tr>
+                    <tbody id="assets-table-body" class="divide-y divide-gray-200">
+                        <!-- Dynamic content will be inserted here -->
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
 
+    <!-- Add/Edit Asset Modal -->
+    <div id="asset-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50 modal-backdrop">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold" id="modal-title">Add New Asset</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <form id="asset-form" onsubmit="saveAsset(event)">
+                <input type="hidden" id="asset-id">
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Asset Name</label>
+                    <input type="text" id="asset-name" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Category</label>
+                    <select id="asset-category" required 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Select Category</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Vehicles">Vehicles</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Software">Software</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Status</label>
+                    <select id="asset-status" required 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="Active">Active</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Retired">Retired</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Location</label>
+                    <input type="text" id="asset-location" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                        Save Asset
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+
+        class AssetManager {
+            constructor() {
+                this.initializeAssets();
+            }
+
+            initializeAssets() {
+                if (!localStorage.getItem('assets')) {
+                    const sampleAssets = [
+                        { id: 'AST001', name: 'Laptop Dell XPS 15', category: 'Electronics', status: 'Active', location: 'IT Department' },
+                        { id: 'AST002', name: 'Office Chair Ergonomic', category: 'Furniture', status: 'Active', location: 'Conference Room' },
+                        { id: 'AST003', name: 'Company Car Toyota', category: 'Vehicles', status: 'Maintenance', location: 'Parking Lot' },
+                        { id: 'AST004', name: 'Windows 10 License', category: 'Software', status: 'Active', location: 'IT Server' },
+                        { id: 'AST005', name: 'Projector Epson', category: 'Electronics', status: 'Retired', location: 'Storage' }
+                    ];
+                    localStorage.setItem('assets', JSON.stringify(sampleAssets));
+                }
+            }
+
+            getAssets() {
+                return JSON.parse(localStorage.getItem('assets') || '[]');
+            }
+
+            saveAsset(asset) {
+                const assets = this.getAssets();
+                if (asset.id) {
+                    const index = assets.findIndex(a => a.id === asset.id);
+                    if (index !== -1) {
+                        assets[index] = asset;
+                    }
+                } else {
+                    asset.id = 'AST' + String(assets.length + 1).padStart(3, '0');
+                    assets.push(asset);
+                }
+                localStorage.setItem('assets', JSON.stringify(assets));
+            }
+
+            deleteAsset(id) {
+                let assets = this.getAssets();
+                assets = assets.filter(a => a.id !== id);
+                localStorage.setItem('assets', JSON.stringify(assets));
+            }
+        }
+
+        const assetManager = new AssetManager();
+        let currentEditId = null;
 
         function checkAuth() {
             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -184,14 +272,145 @@
             }
         }
 
+        function loadUserData() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (currentUser.name) {
+                document.getElementById('user-name').textContent = currentUser.name;
+                document.getElementById('user-role').textContent = currentUser.role;
+                document.getElementById('user-initials').textContent = currentUser.name.charAt(0).toUpperCase();
+            }
+        }
+
+        function renderAssetsTable(assetsToRender = null) {
+            const assets = assetsToRender || assetManager.getAssets();
+            const tbody = document.getElementById('assets-table-body');
+            tbody.innerHTML = '';
+
+            if (assets.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">No assets found</td></tr>';
+                return;
+            }
+
+            assets.forEach(asset => {
+                const statusClass = {
+                    'Active': 'bg-green-100 text-green-800',
+                    'Maintenance': 'bg-yellow-100 text-yellow-800',
+                    'Retired': 'bg-red-100 text-red-800'
+                }[asset.status];
+
+                const row = `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">${asset.id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">${asset.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">${asset.category}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full ${statusClass}">${asset.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">${asset.location}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                            <button onclick="editAsset('${asset.id}')" class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                            <button onclick="deleteAsset('${asset.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function updateStatsCards() {
+            const assets = assetManager.getAssets();
+            const stats = {
+                total: assets.length,
+                active: assets.filter(a => a.status === 'Active').length,
+                maintenance: assets.filter(a => a.status === 'Maintenance').length,
+                retired: assets.filter(a => a.status === 'Retired').length
+            };
+
+            document.getElementById('total-assets').textContent = stats.total;
+            document.getElementById('active-assets').textContent = stats.active;
+            document.getElementById('maintenance-assets').textContent = stats.maintenance;
+            document.getElementById('retired-assets').textContent = stats.retired;
+        }
+
+        function openAddModal() {
+            currentEditId = null;
+            document.getElementById('modal-title').textContent = 'Add New Asset';
+            document.getElementById('asset-form').reset();
+            document.getElementById('asset-modal').classList.remove('hidden');
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+
+        function editAsset(id) {
+            currentEditId = id;
+            const assets = assetManager.getAssets();
+            const asset = assets.find(a => a.id === id);
+            
+            if (asset) {
+                document.getElementById('modal-title').textContent = 'Edit Asset';
+                document.getElementById('asset-id').value = asset.id;
+                document.getElementById('asset-name').value = asset.name;
+                document.getElementById('asset-category').value = asset.category;
+                document.getElementById('asset-status').value = asset.status;
+                document.getElementById('asset-location').value = asset.location;
+                document.getElementById('asset-modal').classList.remove('hidden');
+                setTimeout(() => lucide.createIcons(), 100);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('asset-modal').classList.add('hidden');
+            document.getElementById('asset-form').reset();
+            currentEditId = null;
+        }
+
+        function saveAsset(event) {
+            event.preventDefault();
+            
+            const asset = {
+                id: document.getElementById('asset-id').value || null,
+                name: document.getElementById('asset-name').value,
+                category: document.getElementById('asset-category').value,
+                status: document.getElementById('asset-status').value,
+                location: document.getElementById('asset-location').value
+            };
+
+            assetManager.saveAsset(asset);
+            closeModal();
+            renderAssetsTable();
+            updateStatsCards();
+        }
+
+        function deleteAsset(id) {
+            if (confirm('Are you sure you want to delete this asset?')) {
+                assetManager.deleteAsset(id);
+                renderAssetsTable();
+                updateStatsCards();
+            }
+        }
+
+        function searchAssets() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const assets = assetManager.getAssets();
+            const filtered = assets.filter(asset => 
+                asset.name.toLowerCase().includes(searchTerm) ||
+                asset.id.toLowerCase().includes(searchTerm) ||
+                asset.location.toLowerCase().includes(searchTerm)
+            );
+            renderAssetsTable(filtered);
+        }
+
+        function filterAssets() {
+            const category = document.getElementById('category-filter').value;
+            const assets = assetManager.getAssets();
+            const filtered = category ? assets.filter(asset => asset.category === category) : assets;
+            renderAssetsTable(filtered);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             if (checkAuth()) {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                if (currentUser.name) {
-                    document.getElementById('user-name').textContent = currentUser.name;
-                    document.getElementById('user-role').textContent = currentUser.role;
-                    document.getElementById('user-initials').textContent = currentUser.name.charAt(0).toUpperCase();
-                }
+                loadUserData();
+                renderAssetsTable();
+                updateStatsCards();
             }
         });
     </script>
